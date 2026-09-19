@@ -9,7 +9,8 @@ const mongoose = require("mongoose");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const MONGO_URI = process.env.MONGO_URI;
+const MONGO_URI =
+  process.env.MONGO_URI || "mongodb://127.0.0.1:27017/economicvision";
 
 app.use(helmet());
 app.use(cors());
@@ -45,12 +46,15 @@ app.use((err, req, res, next) => {
 });
 
 async function start() {
-  if (MONGO_URI) {
-    await mongoose.connect(MONGO_URI);
+  mongoose.connection.on("connected", () => {
     console.log("Connected to MongoDB");
-  } else {
-    console.warn("MONGO_URI is not set. Starting without a database connection.");
-  }
+  });
+  mongoose.connection.on("error", (err) => {
+    console.error("MongoDB connection error:", err);
+  });
+
+  await mongoose.connect(MONGO_URI);
+  console.log(`MongoDB ready at ${MONGO_URI}`);
 
   app.listen(PORT, () => {
     console.log(`Economic Vision API running at http://localhost:${PORT}`);
