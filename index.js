@@ -7,10 +7,13 @@ const morgan = require("morgan");
 const compression = require("compression");
 const mongoose = require("mongoose");
 
+const healthRoutes = require("./routes/health");
+const articleRoutes = require("./routes/articles");
+const homeRoutes = require("./routes/home");
+
 const app = express();
-const PORT = process.env.PORT || 3000;
-const MONGO_URI =
-  process.env.MONGO_URI || "mongodb://127.0.0.1:27017/economicvision";
+const PORT = process.env.PORT || 4000;
+const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
 
 app.use(helmet());
 app.use(cors());
@@ -19,20 +22,9 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-  res.json({
-    name: "Economic Vision API",
-    status: "ok",
-    version: "1.0.0",
-  });
-});
-
-app.get("/health", (req, res) => {
-  res.json({
-    status: "healthy",
-    database: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
-  });
-});
+app.use("/", healthRoutes);
+app.use("/api/articles", articleRoutes);
+app.use("/api/home", homeRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Not found" });
@@ -53,8 +45,12 @@ async function start() {
     console.error("MongoDB connection error:", err);
   });
 
+  if (!MONGO_URI) {
+    throw new Error("MONGO_URI is required and must match the admin API database.");
+  }
+
   await mongoose.connect(MONGO_URI);
-  console.log(`MongoDB ready at ${MONGO_URI}`);
+  console.log("MongoDB ready");
 
   app.listen(PORT, () => {
     console.log(`Economic Vision API running at http://localhost:${PORT}`);
