@@ -12,7 +12,7 @@ const articleRoutes = require("./routes/articles");
 const homeRoutes = require("./routes/home");
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 3001;
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
 
 app.use(helmet());
