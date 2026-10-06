@@ -1,3 +1,5 @@
+const { categoryHref } = require("./slug");
+
 function blocksOf(article) {
   return Array.isArray(article.blocks) ? article.blocks : [];
 }
@@ -105,13 +107,18 @@ function presentCard(doc) {
   const article = plain(doc);
   const when = whenOf(article);
   const kind = kindOf(article);
+  const category = article.category || "Economy";
+  const subCategory = article.subCategory || "";
 
   return {
     id: String(article._id),
     slug: article.slug,
     title: article.title,
     excerpt: article.excerpt || "",
-    category: article.category || "Economy",
+    category,
+    subCategory,
+    categoryHref: categoryHref(category),
+    subCategoryHref: subCategory ? categoryHref(category, subCategory) : "",
     kicker: article.kicker || "",
     tags: article.tags || [],
     coverImage: coverOf(article),
@@ -134,7 +141,9 @@ function presentArticle(doc) {
   return {
     ...card,
     section: card.category,
-    subsection: article.kicker || card.category,
+    sectionHref: card.categoryHref,
+    subsection: card.subCategory || article.kicker || card.category,
+    subsectionHref: card.subCategoryHref,
     tagLeft: card.category,
     tagRight: article.kicker || (article.featured ? "Featured" : article.tags?.[0] || "Story"),
     dek: article.excerpt || "",
@@ -168,6 +177,7 @@ function presentHero(card) {
 function presentTopStory(card) {
   return {
     category: card.category,
+    categoryHref: card.categoryHref,
     title: card.title,
     summary: card.excerpt,
     time: card.timeAgo,
@@ -201,7 +211,7 @@ function presentRelated(card) {
     time: card.timeAgo,
     image: card.coverImage,
     href: card.href,
-    tag: card.category,
+    tag: card.subCategory || card.category,
   };
 }
 

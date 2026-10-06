@@ -7,6 +7,7 @@ const articleSchema = new mongoose.Schema(
     kicker: String,
     excerpt: String,
     category: String,
+    subCategory: String,
     tags: [String],
     coverImage: String,
     featured: Boolean,

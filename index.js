@@ -10,6 +10,8 @@ const mongoose = require("mongoose");
 const healthRoutes = require("./routes/health");
 const articleRoutes = require("./routes/articles");
 const homeRoutes = require("./routes/home");
+const categoryRoutes = require("./routes/categories");
+const mediaRoutes = require("./routes/media");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -25,6 +27,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/", healthRoutes);
 app.use("/api/articles", articleRoutes);
 app.use("/api/home", homeRoutes);
+app.use("/api/categories", categoryRoutes);
+app.use("/api/media", mediaRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Not found" });
