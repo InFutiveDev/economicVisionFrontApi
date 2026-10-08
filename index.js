@@ -12,11 +12,13 @@ const articleRoutes = require("./routes/articles");
 const homeRoutes = require("./routes/home");
 const categoryRoutes = require("./routes/categories");
 const mediaRoutes = require("./routes/media");
+const subscribeRoutes = require("./routes/subscribe");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 const MONGO_URI = process.env.MONGO_URI || process.env.MONGODB_URI;
 
+app.set("trust proxy", 1);
 app.use(helmet());
 app.use(cors());
 app.use(compression());
@@ -29,6 +31,7 @@ app.use("/api/articles", articleRoutes);
 app.use("/api/home", homeRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/media", mediaRoutes);
+app.use("/api/subscribe", subscribeRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Not found" });
