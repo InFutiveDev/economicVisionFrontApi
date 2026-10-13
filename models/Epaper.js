@@ -93,7 +93,7 @@ const epaperSchema = new mongoose.Schema(
 );
 
 epaperSchema.index({ city: 1, date: -1 });
-epaperSchema.index({ slug: 1 });
+
 
 epaperSchema.statics.publishedQuery = function publishedQuery(extra = {}) {
   return { status: "published", ...extra };
