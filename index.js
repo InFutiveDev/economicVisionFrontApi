@@ -41,7 +41,13 @@ app.use((req, res) => {
   res.status(404).json({ error: "Not found" });
 });
 
+// Handle body-parser errors (malformed / malicious JSON from external probes).
+// These are 400-level client errors — do NOT log as server errors.
 app.use((err, req, res, next) => {
+  if (err.status === 400 && err.type === "entity.parse.failed") {
+    return res.status(400).json({ error: "Invalid request body" });
+  }
+  // Only log unexpected server-side (5xx) errors
   console.error(err);
   res.status(err.status || 500).json({
     error: err.message || "Internal server error",
